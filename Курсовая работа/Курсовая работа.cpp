@@ -45,11 +45,18 @@ void menu() {
     cout << "13 - Очищение базы данных\n";
     cout << "0 - Завершение работы программы\n\n";
 }
-void undermenu() {
+void redactMenu() {
     cout << "\n1 - Изменить ФИО\n";
     cout << "2 - Изменить группу\n";
     cout << "3 - Изменить оценки\n";
     cout << "4 - Изменить стипендию\n\n";
+    cout << "Выбор: ";
+}
+void filterMenu() {
+    cout << "\n1 - Фильтрация по ФИО\n";
+    cout << "2 - Фильтровать по группе\n";
+    cout << "3 - Фильтровать по оценкам\n";
+    cout << "4 - Фильтровать по стипендии\n\n";
     cout << "Выбор: ";
 }
 
@@ -221,37 +228,28 @@ Group inputGroup2(int num, int kol) {
     return group;
 }
 
-/*4*/bool infoStudent(List<Info> list) {
+/*2*/void deleteStudent(List<Info>& list) {
+    cout << "\nВведите номер зачетной книжки удаляемого студента: ";
     bool isStudent = false;
-    string name1, name2, name3;
-    cout << "Введите ФИО студента: ";
-    cin >> name1 >> name2 >> name3;
-    name1 = name1 + " " + name2 + " " + name3;
+    int num;
+    cin >> num;
     for (int i = 0; i < list.count(); i++) {
-        if (list.elementAt(i).name == name1) { 
-            out(list.elementAt(i));
+        if (list.elementAt(i).booknumber == num) {
+            list.removeAt(i);
             isStudent = true;
+            break;
         }
     }
-    if (!isStudent) { cout << "Нет студента с таким ФИО!\n"; }
-    return isStudent;
-}
-/*5*/void infoAllStudent(List<Info> list) {
-    if (list.count() == 0) {
-        cout << "В потоке нет ни одного студента!\n";
-        return;
-    }
-    for (int i = 0; i < list.count(); i++) { out(list.elementAt(i)); }
+    if (!isStudent) { cout << "Нет студента с таким номером зачетной книжки!\n"; }
 }
 /*3*/void redactStudent(List<Info>& list) {
-    if (!infoStudent(list)) { return; }
     bool isStudent = false;
     cout << "\nВведите номер зачетной книжки студента: ";
     int num;
     cin >> num;
     for (int i = 0; i < list.count(); i++) {
         if (list.elementAt(i).booknumber == num) {
-            undermenu();
+            redactMenu();
             isStudent = true;
             Info newinfo = list.elementAt(i);
             int value;
@@ -291,6 +289,165 @@ Group inputGroup2(int num, int kol) {
         }
     }
     if (!isStudent) { cout << "Нет студента с таким номером зачетной книжки!\n"; }
+}
+/*4*/void infoStudent(List<Info> list) {
+    filterMenu();
+    bool isStudent = false, marks;
+    int choice;
+    int arr[5], arr1[5];
+    string name1, name2, name3;
+    cin >> choice;
+    switch (choice) {
+    case 1:
+        cout << "Введите ФИО: ";
+        cin >> name1 >> name2 >> name3;
+        name1 = name1 + " " + name2 + " " + name3;
+        for (int i = 0; i < list.count(); i++) {
+            if (list.elementAt(i).name == name1) {
+                out(list.elementAt(i));
+                isStudent = true;
+            }
+        }
+        if (!isStudent) { cout << "Нет студента с таким ФИО!\n"; }
+        break;
+    case 2:
+        cout << "Введите группу: ";
+        cin >> choice;
+        for (int i = 0; i < list.count(); i++) {
+            if (list.elementAt(i).group == choice) {
+                out(list.elementAt(i));
+                isStudent = true;
+            }
+        }
+        if (!isStudent) { cout << "Нет группы с таким номером!\n"; }
+        break;
+    case 3:
+        cout << "Введите оценки: ";
+        for (int i = 0; i < 5; i++) { cin >> arr[i]; }
+        for (int i = 0; i < list.count(); i++) {
+            marks = true;
+            for (int j = 0; j < 5; j++) {
+                if (arr[j] != list.elementAt(i).marks[j]) { marks = false; }
+            }
+            if (marks) {
+                out(list.elementAt(i));
+                isStudent = true;
+            }
+        }
+        if (!isStudent) { cout << "Нет студентов с такими оценками!\n"; }
+        break;
+    case 4:
+        cout << "Введите размер стипендии: ";
+        cin >> choice;
+        for (int i = 0; i < list.count(); i++) {
+            if (list.elementAt(i).stipa == choice) {
+                out(list.elementAt(i));
+                isStudent = true;
+            }
+        }
+        if (!isStudent) { cout << "Нет студентов с такой стипендией!\n"; }
+        break;
+    }
+}
+/*5*/void infoAllStudent(List<Info> list) {
+    if (list.count() == 0) {
+        cout << "В потоке нет ни одного студента!\n";
+        return;
+    }
+    for (int i = 0; i < list.count(); i++) { out(list.elementAt(i)); }
+}
+/*6*/void addGroup(List<Info>& list) {
+    int group;
+    cout << "Введите номер группы: ";
+    cin >> group;
+    while (true) {
+        list.add(inputGroup(group));
+        cout << "\n1 - Продолжить добавление\n";
+        cout << "2 - Закончить\n";
+        cout << "Выбор: ";
+        int choice;
+        cin >> choice;
+        if (choice == 2) { break; }
+    }
+}
+/*7*/void deleteGroup(List<Info>& list) {
+    int group;
+    bool isGroup = false;
+    cout << "Введите группу: ";
+    cin >> group;
+    for (int i = 0; i < list.count(); i++) {
+        if (list.elementAt(i).group == group) { 
+            list.removeAt(i);
+            isGroup = true;
+        }
+    }
+    if (!isGroup) { cout << "Нет группы с таким номером!\n"; }
+}
+/*8*/void redactGroup(List<Info>& list) {
+    int oldnum, newnum;
+    bool isGroup = false;
+    cout << "Введите номер группы, который хотите поменять: ";
+    cin >> oldnum;
+    cout << "Введите новый номер для этой группы: ";
+    cin >> newnum;
+    for (int i = 0; i < list.count(); i++) {
+        if (list.elementAt(i).group == oldnum) {
+            Info newinfo = list.elementAt(i);
+            newinfo.group = newnum;
+            list.removeAt(i);
+            i--;
+            list.add(newinfo);
+            isGroup = true;
+        }
+    }
+    if (!isGroup) { cout << "Нет группы с таким номером!\n"; }
+}
+/*9*/void infoGroup(List<Info> list) {
+    int group;
+    bool isGroup = false;
+    cout << "Введите группу: ";
+    cin >> group;
+    for (int i = 0; i < list.count(); i++) {
+        if (list.elementAt(i).group == group) { 
+            out(list.elementAt(i));
+            isGroup = true;
+        }
+    }
+    if (!isGroup) { cout << "Нет группы с таким номером!\n"; }
+}
+/*10*/void bestGroup(List<Info> list) {
+    List<Group> dellist, newlist;
+    bool isBest = false;
+    for (int i = 0; i < list.count(); i++) { dellist.add(inputGroup1(list.elementAt(i))); }
+    while (dellist.count() != 0) {
+        int kol = dellist.elementAt(0).best;
+        int num = dellist.elementAt(0).group;
+        for (int i = 1; i < dellist.count(); i++) {
+            if (dellist.elementAt(0).group == dellist.elementAt(i).group) {
+                kol += dellist.elementAt(i).best;
+                dellist.removeAt(i);
+                i--;
+            }
+        }
+        newlist.add(inputGroup2(num, kol));
+        dellist.removeAt(0);
+    }
+
+    int group = 0, best = 0;
+    for (int i = 0; i < newlist.count(); i++) {
+        if (newlist.elementAt(i).best > best) {
+            group = newlist.elementAt(i).group;
+            best = list.elementAt(i).best;
+            isBest = true;
+        }
+    }
+
+    for (int i = 0; i < list.count(); i++) {
+        if (list.elementAt(i).group == group) {
+            cout << list.elementAt(i).name << "\n";
+        }
+    }
+    if (!isBest) { cout << "На потоке нет ни одного хорошиста или отличника!\n"; }
 }
 /*11*/void fileInput(List<Info>& list) {
     Info info;
@@ -339,114 +496,6 @@ Group inputGroup2(int num, int kol) {
         output << info.booknumber << endl;
     }
     output.close();
-}
-/*2*/void deleteStudent(List<Info>& list) {
-    if (!infoStudent(list)) { return; }
-    cout << "\nВведите номер зачетной книжки удаляемого студента: ";
-    bool isStudent = false;
-    int num;
-    cin >> num;
-    for (int i = 0; i < list.count(); i++) {
-        if (list.elementAt(i).booknumber == num) {
-            list.removeAt(i);
-            isStudent = true;
-            break;
-        }
-    }
-    if (!isStudent) { cout << "Нет студента с таким номером зачетной книжки!\n"; }
-}
-/*10*/void bestGroup(List<Info> list) {
-    List<Group> dellist, newlist;
-    bool isBest = false;
-    for (int i = 0; i < list.count(); i++) { dellist.add(inputGroup1(list.elementAt(i))); }
-    while (dellist.count() != 0) {
-        int kol = dellist.elementAt(0).best;
-        int num = dellist.elementAt(0).group;
-        for (int i = 1; i < dellist.count(); i++) {
-            if (dellist.elementAt(0).group == dellist.elementAt(i).group) {
-                kol += dellist.elementAt(i).best;
-                dellist.removeAt(i);
-                i--;
-            }
-        }
-        newlist.add(inputGroup2(num, kol));
-        dellist.removeAt(0);
-    }
-
-    int group = 0, best = 0;
-    for (int i = 0; i < newlist.count(); i++) {
-        if (newlist.elementAt(i).best > best) {
-            group = newlist.elementAt(i).group;
-            best = list.elementAt(i).best;
-            isBest = true;
-        }
-    }
-
-    for (int i = 0; i < list.count(); i++) {
-        if (list.elementAt(i).group == group) {
-            cout << list.elementAt(i).name << "\n";
-        }
-    }
-    if (!isBest) { cout << "На потоке нет ни одного хорошиста или отличника!\n"; }
-}
-/*6*/void addGroup(List<Info>& list) {
-    int group;
-    cout << "Введите номер группы: ";
-    cin >> group;
-    while (true) {
-        list.add(inputGroup(group));
-        cout << "\n1 - Продолжить добавление\n";
-        cout << "2 - Закончить\n";
-        cout << "Выбор: ";
-        int choice;
-        cin >> choice;
-        if (choice == 2) { break; }
-    }
-}
-/*7*/void deleteGroup(List<Info>& list) {
-    int group;
-    bool isGroup = false;
-    cout << "Введите группу: ";
-    cin >> group;
-    for (int i = 0; i < list.count(); i++) {
-        if (list.elementAt(i).group == group) { 
-            list.removeAt(i);
-            isGroup = true;
-        }
-    }
-    if (!isGroup) { cout << "Нет группы с таким номером!\n"; }
-}
-/*9*/void infoGroup(List<Info> list) {
-    int group;
-    bool isGroup = false;
-    cout << "Введите группу: ";
-    cin >> group;
-    for (int i = 0; i < list.count(); i++) {
-        if (list.elementAt(i).group == group) { 
-            out(list.elementAt(i));
-            isGroup = true;
-        }
-    }
-    if (!isGroup) { cout << "Нет группы с таким номером!\n"; }
-}
-/*8*/void redactGroup(List<Info>& list) {
-    int oldnum, newnum;
-    bool isGroup = false;
-    cout << "Введите номер группы, который хотите поменять: ";
-    cin >> oldnum;
-    cout << "Введите новый номер для этой группы: ";
-    cin >> newnum;
-    for (int i = 0; i < list.count(); i++) {
-        if (list.elementAt(i).group == oldnum) {
-            Info newinfo = list.elementAt(i);
-            newinfo.group = newnum;
-            list.removeAt(i);
-            i--;
-            list.add(newinfo);
-            isGroup = true;
-        }
-    }
-    if (!isGroup) { cout << "Нет группы с таким номером!\n"; }
 }
 
 int main() {
