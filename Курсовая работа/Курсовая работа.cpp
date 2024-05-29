@@ -3,6 +3,8 @@
 #include <fstream>
 using namespace std;
 
+int id = 0;
+
 int toint(string str) {
     int* arr = new int[str.size()];
     for (int i = 0; i < str.size(); i++) {
@@ -49,14 +51,16 @@ void redactMenu() {
     cout << "\n1 - Изменить ФИО\n";
     cout << "2 - Изменить группу\n";
     cout << "3 - Изменить оценки\n";
-    cout << "4 - Изменить стипендию\n\n";
+    cout << "4 - Изменить стипендию\n";
+    cout << "5 - Изменить номер зачетной книжки\n\n";
     cout << "Выбор: ";
 }
 void filterMenu() {
     cout << "\n1 - Фильтрация по ФИО\n";
     cout << "2 - Фильтровать по группе\n";
     cout << "3 - Фильтровать по оценкам\n";
-    cout << "4 - Фильтровать по стипендии\n\n";
+    cout << "4 - Фильтровать по стипендии\n";
+    cout << "5 - Фильтровать по номеру зачетной книжки\n\n";
     cout << "Выбор: ";
 }
 
@@ -70,6 +74,7 @@ struct Info {
     int marks[5] = {};
     int stipa = 0;
     int booknumber = 0;
+    int id = 0;
     bool best = false;
 };
 template <typename T>
@@ -185,6 +190,8 @@ Info input() {
     cin >> info.stipa;
     cout << "Введите номер зачетной книжки студента: ";
     cin >> info.booknumber;
+    id++;
+    info.id = id;
     return info;
 }
 void out(Info info) {
@@ -193,7 +200,8 @@ void out(Info info) {
     cout << "\nОценки студента: ";
     for (int i = 0; i < 5; i++) { cout << info.marks[i] << " "; }
     cout << "\nСтипендия студента : " << info.stipa;
-    cout << "\nНомер зачетной книжки студента: " << info.booknumber << "\n";
+    cout << "\nНомер зачетной книжки студента: " << info.booknumber;
+    cout << "\nID студента: " << info.id << "\n";
 }
 Info inputGroup(int group) {
     Info info;
@@ -213,6 +221,8 @@ Info inputGroup(int group) {
     cin >> info.stipa;
     cout << "Введите номер зачетной книжки студента: ";
     cin >> info.booknumber;
+    id++;
+    info.id = id;
     return info;
 }
 Group inputGroup1(Info info) {
@@ -229,30 +239,29 @@ Group inputGroup2(int num, int kol) {
 }
 
 /*2*/void deleteStudent(List<Info>& list) {
-    cout << "\nВведите номер зачетной книжки удаляемого студента: ";
+    cout << "\nВведите ID удаляемого студента: ";
     bool isStudent = false;
     int num;
     cin >> num;
     for (int i = 0; i < list.count(); i++) {
-        if (list.elementAt(i).booknumber == num) {
+        if (list.elementAt(i).id == num) {
             list.removeAt(i);
             isStudent = true;
             break;
         }
     }
-    if (!isStudent) { cout << "Нет студента с таким номером зачетной книжки!\n"; }
+    if (!isStudent) { cout << "Нет студента с таким ID!\n"; }
 }
 /*3*/void redactStudent(List<Info>& list) {
     bool isStudent = false;
-    cout << "\nВведите номер зачетной книжки студента: ";
+    cout << "\nВведите ID студента: ";
     int num;
     cin >> num;
     for (int i = 0; i < list.count(); i++) {
-        if (list.elementAt(i).booknumber == num) {
+        if (list.elementAt(i).id == num) {
             redactMenu();
             isStudent = true;
             Info newinfo = list.elementAt(i);
-            int value;
             double sred = 0;
             string fio, fio1, fio2;
             cin >> num;
@@ -265,8 +274,8 @@ Group inputGroup2(int num, int kol) {
                 break;
             case 2:
                 cout << "Введите новую группу: ";
-                cin >> value;
-                newinfo.group = value;
+                cin >> num;
+                newinfo.group = num;
                 break;
             case 3:
                 cout << "Введите новые оценки: ";
@@ -279,8 +288,13 @@ Group inputGroup2(int num, int kol) {
                 break;
             case 4:
                 cout << "Введите новый размер стипендии: ";
-                cin >> value;
-                newinfo.stipa = value;
+                cin >> num;
+                newinfo.stipa = num;
+                break;
+            case 5:
+                cout << "Введите новый номер зачетной книжки: ";
+                cin >> num;
+                newinfo.booknumber = num;
                 break;
             }
             list.removeAt(i);
@@ -288,7 +302,7 @@ Group inputGroup2(int num, int kol) {
             break;
         }
     }
-    if (!isStudent) { cout << "Нет студента с таким номером зачетной книжки!\n"; }
+    if (!isStudent) { cout << "Нет студента с таким ID!\n"; }
 }
 /*4*/void infoStudent(List<Info> list) {
     filterMenu();
@@ -346,6 +360,17 @@ Group inputGroup2(int num, int kol) {
             }
         }
         if (!isStudent) { cout << "Нет студентов с такой стипендией!\n"; }
+        break;
+    case 5:
+        cout << "Введите номер зачетной книжки: ";
+        cin >> choice;
+        for (int i = 0; i < list.count(); i++) {
+            if (list.elementAt(i).booknumber == choice) {
+                out(list.elementAt(i));
+                isStudent = true;
+            }
+        }
+        if (!isStudent) { cout << "Нет студентов с таким номером зачетной книжки!\n"; }
         break;
     }
 }
@@ -478,6 +503,8 @@ Group inputGroup2(int num, int kol) {
             break;
         case 5:
             info.booknumber = toint(str);
+            id++;
+            info.id = id;
             list.add(info);
             number = 0;
         }
@@ -494,6 +521,7 @@ Group inputGroup2(int num, int kol) {
         for (int j = 0; j < 5; j++) { output << info.marks[j] << " "; }
         output << endl << info.stipa << endl;
         output << info.booknumber << endl;
+        output << info.id << endl;
     }
     output.close();
 }
@@ -555,4 +583,4 @@ int main() {
             cout << "Некорректная команда!";
         }
     }
-}
+}   
