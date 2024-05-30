@@ -257,7 +257,6 @@ Group inputGroup2(int num, int kol) {
             redactMenu();
             isStudent = true;
             Info newinfo = list.elementAt(i);
-            double sred = 0;
             string fio, fio1, fio2;
             cin >> num;
             switch (num) {
