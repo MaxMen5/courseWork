@@ -498,6 +498,7 @@ Group inputGroup2(int num, int kol) {
                 sred += arr[i];
             }
             if (sred / 5 > 3.5) { info.best = true; }
+            break;
         case 4:
             info.stipa = toint(str);
             break;
