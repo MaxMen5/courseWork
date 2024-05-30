@@ -2,31 +2,6 @@
 #include <string>
 #include <fstream>
 using namespace std;
-
-int id = 0;
-
-int toint(string str) {
-    int* arr = new int[str.size()];
-    for (int i = 0; i < str.size(); i++) {
-        arr[i] = str[i] - 48;
-    }
-    int num = 0, k = 0;
-    for (int i = str.size() - 1; i >= 0; i--, k++) {
-        num += arr[i] * pow(10, k);
-    }
-    return num;
-}
-int* tointarr(string str) {
-    int arr[5] = {}, k = 0;
-    for (int i = 0; i < str.size(); i++) {
-        if (str[i] != ' ') {
-            arr[k] = str[i] - 48;
-            k++;
-        }
-    }
-    return arr;
-}
-
 void menu() {
     cout << "\tРАБОТА СО СТУДЕНТАМИ\n";
     cout << "1 - Добавление студента\n";
@@ -64,6 +39,30 @@ void filterMenu() {
     cout << "Выбор: ";
 }
 
+int id = 0;
+
+int toint(string str) {
+    int* arr = new int[str.size()];
+    for (int i = 0; i < str.size(); i++) {
+        arr[i] = str[i] - 48;
+    }
+    int num = 0, k = 0;
+    for (int i = str.size() - 1; i >= 0; i--, k++) {
+        num += arr[i] * pow(10, k);
+    }
+    return num;
+}
+int* tointarr(string str) {
+    int arr[5] = {}, k = 0;
+    for (int i = 0; i < str.size(); i++) {
+        if (str[i] != ' ') {
+            arr[k] = str[i] - 48;
+            k++;
+        }
+    }
+    return arr;
+}
+
 struct Group {
     int group = 0;
     int best = 0;
@@ -75,7 +74,7 @@ struct Info {
     int stipa = 0;
     int booknumber = 0;
     int id = 0;
-    bool best = false;
+    bool best = true;
 };
 template <typename T>
 struct Node {
@@ -173,7 +172,6 @@ struct List {
 
 Info input() {
     Info info;
-    double sred = 0;
     string name1, name2, name3;
     cout << "Введите ФИО студента: ";
     cin >> name1 >> name2 >> name3;
@@ -183,9 +181,8 @@ Info input() {
     cout << "Введите оценки студента: ";
     for (int i = 0; i < 5; i++) {
         cin >> info.marks[i];
-        sred += info.marks[i];
+        if (info.marks[i] < 4) { info.best = false; }
     }
-    if (sred / 5 > 3.5) { info.best = true; }
     cout << "Введите размер стипендии студента: ";
     cin >> info.stipa;
     cout << "Введите номер зачетной книжки студента: ";
@@ -205,7 +202,6 @@ void out(Info info) {
 }
 Info inputGroup(int group) {
     Info info;
-    double sred = 0;
     string name1, name2, name3;
     cout << "Введите ФИО студента: ";
     cin >> name1 >> name2 >> name3;
@@ -214,9 +210,8 @@ Info inputGroup(int group) {
     cout << "Введите оценки студента: ";
     for (int i = 0; i < 5; i++) {
         cin >> info.marks[i];
-        sred += info.marks[i];
+        if (info.marks[i] < 4) { info.best = false; }
     }
-    if (sred / 5 > 3.5) { info.best = true; }
     cout << "Введите размер стипендии студента: ";
     cin >> info.stipa;
     cout << "Введите номер зачетной книжки студента: ";
@@ -279,12 +274,11 @@ Group inputGroup2(int num, int kol) {
                 break;
             case 3:
                 cout << "Введите новые оценки: ";
+                newinfo.best = true;
                 for (int i = 0; i < 5; i++) {
                     cin >> newinfo.marks[i];
-                    sred += newinfo.marks[i];
+                    if (newinfo.marks[i] < 4) { newinfo.best = false; }
                 }
-                if (sred / 5 > 3.5) { newinfo.best = true; }
-                else { newinfo.best = false; }
                 break;
             case 4:
                 cout << "Введите новый размер стипендии: ";
@@ -522,7 +516,6 @@ Group inputGroup2(int num, int kol) {
         for (int j = 0; j < 5; j++) { output << info.marks[j] << " "; }
         output << endl << info.stipa << endl;
         output << info.booknumber << endl;
-        output << info.id << endl;
     }
     output.close();
 }
